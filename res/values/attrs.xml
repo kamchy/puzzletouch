@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="TileView">
+    <attr name="tilesX" format="integer" />
+    <attr name="tilesY" format="integer" />
+  </declare-styleable>
+</resources>
+
