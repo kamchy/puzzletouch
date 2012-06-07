@@ -3,6 +3,8 @@
   <declare-styleable name="TileView">
     <attr name="tilesX" format="integer" />
     <attr name="tilesY" format="integer" />
+    <attr name="imageWidth" format="integer" />
+    <attr name="imageHeight" format="integer" />
   </declare-styleable>
 </resources>
 

@@ -3,7 +3,6 @@ package pl.chyla.andro.puzzletouch;
 import android.content.*;
 import android.content.res.*;
 import android.graphics.*;
-import android.graphics.drawable.*;
 import android.util.*;
 import android.view.*;
 
@@ -40,6 +39,8 @@ public class TileView extends View {
   int[][] mTileGrid;
 
   private final Paint mPaint = new Paint();
+  private int mImageWidth;
+  private int mImageHeight;
 
   public TileView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -51,8 +52,10 @@ public class TileView extends View {
 
     mXTilesCount = a.getInt(R.styleable.TileView_tilesX, 3);
     mYTilesCount = a.getInt(R.styleable.TileView_tilesY, 3);
-    mTileSizeX = 200;
-    mTileSizeY = 200;
+    mImageWidth = a.getInt(R.styleable.TileView_imageWidth, 480);
+    mImageHeight = a.getInt(R.styleable.TileView_imageHeight, 480);
+    mTileSizeX = mImageWidth / mXTilesCount;
+    mTileSizeY = mImageHeight / mYTilesCount;
     mTileGrid = new int[mXTilesCount][mYTilesCount];
 
     a.recycle();
@@ -91,47 +94,42 @@ public class TileView extends View {
 
   }
 
-  /**
-   * Function to set the specified Drawable as the tile for a particular integer
-   * key.
-   *
-   * @param key
-   * @param tile
-   */
-  public void loadTile(int key, Drawable tile) {
-    Bitmap bitmap = Bitmap.createBitmap(mTileSizeX, mTileSizeY,
-        Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-    tile.setBounds(0, 0, mTileSizeX, mTileSizeY);
-    tile.draw(canvas);
 
-    mTileArray[key] = bitmap;
-  }
-
-  protected void loadTiles(int startIndex, Drawable drawable) {
-    int len = mTileArray.length;
-    Log.i("KC", String.format(
-        "loadTileS: [mTileSizeX, mTileSizeY]=[%s, %s]\n[mXTilesCount, mYTilesCount]=[%s, %s]\nmTileAray.len=%s", mTileSizeX, mTileSizeY, mXTilesCount, mYTilesCount, len));
+  protected void loadTiles(int startIndex, int drawableId) {
+    Bitmap bMap = BitmapFactory.decodeResource(getResources(), drawableId);
+    Bitmap bMapScaled = Bitmap.createScaledBitmap(bMap, mImageWidth, mImageHeight, true);
 
     for (int x = 0; x < mXTilesCount; x++) {
       for (int y = 0; y < mYTilesCount; y++) {
-        Bitmap bitmap = Bitmap.createBitmap(mTileSizeX, mTileSizeY,
-            Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
         int xPos = x * mTileSizeX;
         int yPos = y * mTileSizeY;
-        int right = xPos + mTileSizeX - 1;
-        int bot = yPos + mTileSizeY - 1;
-        drawable.setBounds(xPos, yPos, right, bot);
-        drawable.draw(canvas);
+        Bitmap bitmap = Bitmap.createBitmap(bMapScaled, xPos, yPos, mTileSizeX, mTileSizeY);
         int idx = startIndex + y * mXTilesCount + x;
         mTileArray[idx] = bitmap;
-        Log.i("KC", String.format(
-            "[x,y]=[%s, %s]\n[xPos, yPos]=[%s, %s]\n[right, bot]=[%s, %s]", x, y, xPos, yPos, right, bot));
       }
     }
   }
 
+  //todo implement|J
+  /**
+   *
+   * @param xloc
+   * @param yloc
+   * @return -1 when x, y does not denote any tile
+   */
+  protected int getXTile(int xloc, int yloc) {
+    int resIdxX = (int)Math.floor((xloc - mXOffset) / mTileSizeX);
+    int resIdxY = (int)Math.floor((yloc - mYOffset) / mTileSizeY);
+    return (resIdxX > 0 && resIdxY > 0) ? resIdxX : -1;
+  }
+
+  //todo implement
+  protected int getYTile(int xloc, int yloc) {
+    int resIdxX = (int)Math.floor((xloc - mXOffset) / mTileSizeX);
+    int resIdxY = (int)Math.floor((yloc - mYOffset) / mTileSizeY);
+    return (resIdxX > 0 && resIdxY > 0) ? resIdxY : -1;
+
+  }
   /**
    * Resets all tiles to 0 (empty)
    *
@@ -152,12 +150,11 @@ public class TileView extends View {
   @Override
   public void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    int dx = 0, dy = 0;
     for (int x = 0; x < mXTilesCount; x += 1) {
       for (int y = 0; y < mYTilesCount; y += 1) {
         if (mTileGrid[x][y] > 0) {
-          int px = mXOffset + x * mTileSizeX + dx;
-          int py = mYOffset + y * mTileSizeY + dy;
+          int px = mXOffset + x * mTileSizeX;
+          int py = mYOffset + y * mTileSizeY;
           canvas.drawBitmap(mTileArray[mTileGrid[x][y] - 1], px, py, mPaint);
         }
       }
