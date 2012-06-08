@@ -1,10 +1,14 @@
 package pl.chyla.andro.puzzletouch;
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.util.*;
-import android.view.*;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 
 /**
  * TileView: a View-variant designed for handling arrays of "icons" or other
@@ -115,21 +119,19 @@ public class TileView extends View {
    *
    * @param xloc
    * @param yloc
-   * @return -1 when x, y does not denote any tile
+   * @return -1 when x, y does not dengetTileCoordForPosiote any tile
    */
-  protected int getXTile(int xloc, int yloc) {
-    int resIdxX = (int)Math.floor((xloc - mXOffset) / mTileSizeX);
-    int resIdxY = (int)Math.floor((yloc - mYOffset) / mTileSizeY);
-    return (resIdxX > 0 && resIdxY > 0) ? resIdxX : -1;
+  protected Coordinate getTileCoordForPos(int xloc, int yloc) {
+    float resX= (float)(xloc - mXOffset) / mTileSizeX;
+    float resY = (float)(yloc - mYOffset) / mTileSizeY;
+    Log.i("kc", String.format("xloc = %s, mXOffset = %s, xloc-xoffset=%s, res=%f", xloc, mXOffset, xloc-mXOffset, resX));
+    Log.i("kc", String.format("yloc = %s, mYOffset = %s, yloc-yoffset=%s, res=%f", yloc, mYOffset, yloc-mYOffset, resY));
+    if (resX < 0 || resY < 0) {
+      return null;
+    } else
+      return new Coordinate((int)resX, (int)resY);
   }
 
-  //todo implement
-  protected int getYTile(int xloc, int yloc) {
-    int resIdxX = (int)Math.floor((xloc - mXOffset) / mTileSizeX);
-    int resIdxY = (int)Math.floor((yloc - mYOffset) / mTileSizeY);
-    return (resIdxX > 0 && resIdxY > 0) ? resIdxY : -1;
-
-  }
   /**
    * Resets all tiles to 0 (empty)
    *
@@ -160,6 +162,33 @@ public class TileView extends View {
       }
     }
 
+  }
+  /**
+   * Simple class containing two integer values and a comparison function.
+   * There's probably something I should use instead, but this was quick and
+   * easy to build.
+   *
+   */
+  protected  class Coordinate {
+    public int x;
+    public int y;
+
+    public Coordinate(int newX, int newY) {
+      x = newX;
+      y = newY;
+    }
+
+    public boolean equals(Coordinate other) {
+      if (x == other.x && y == other.y) {
+        return true;
+      }
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return "Coordinate: [" + x + "," + y + "]";
+    }
   }
 
 }

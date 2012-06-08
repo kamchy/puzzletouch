@@ -115,12 +115,12 @@ public class PuzzleView extends TileView {
   }
 
   private Coordinate getCoordForTouchpoint(int x, int y) {
-    int xIdx = getXTile(x,y);
-    int yIdx = getYTile(x,y);
-    if (xIdx < 0 || yIdx < 0) {
+    
+    Coordinate tilesCoord = getTileCoordForPos(x,y);
+    if (tilesCoord != null && (tilesCoord.x < 0 || tilesCoord.y < 0 || tilesCoord.x >= mXTilesCount || tilesCoord.y >= mYTilesCount)) {
       return null;
     }
-    return new Coordinate(xIdx, yIdx);
+    return tilesCoord;
   }
 
   @Override
@@ -147,7 +147,7 @@ public class PuzzleView extends TileView {
 
   private RefreshHandler mRedrawHandler = new RefreshHandler();
 
-  private long mMoveDelay = 600;
+  private long mMoveDelay = 10;
   private long mLastMove = 0;
 
   class RefreshHandler extends Handler {
@@ -288,33 +288,7 @@ public class PuzzleView extends TileView {
   }
 
 
-  /**
-   * Simple class containing two integer values and a comparison function.
-   * There's probably something I should use instead, but this was quick and
-   * easy to build.
-   *
-   */
-  private class Coordinate {
-    public int x;
-    public int y;
 
-    public Coordinate(int newX, int newY) {
-      x = newX;
-      y = newY;
-    }
-
-    public boolean equals(Coordinate other) {
-      if (x == other.x && y == other.y) {
-        return true;
-      }
-      return false;
-    }
-
-    @Override
-    public String toString() {
-      return "Coordinate: [" + x + "," + y + "]";
-    }
-  }
 
   public void setTextView(TextView findViewById) {
     mStatusText = findViewById;
