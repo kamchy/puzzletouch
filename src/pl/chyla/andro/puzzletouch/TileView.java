@@ -88,8 +88,10 @@ public class TileView extends View {
     Log.i("KC", String.format("* -> Size changed from (%s, %s) to (%s, %s",
         oldw, oldh, w, h));
     int size = Math.min(w, h);
-    mTileSizeX = (int) Math.floor(size / mXTilesCount);
-    mTileSizeY = (int) Math.floor(size / mYTilesCount);
+    
+    mImageWidth = size; mImageHeight = size;
+    mTileSizeX = (int) (size / mXTilesCount);
+    mTileSizeY = (int) (size / mYTilesCount);
 
     mXOffset = ((w - (mTileSizeX * mXTilesCount)) / 2);
     mYOffset = ((h - (mTileSizeY * mYTilesCount)) / 2);
@@ -124,8 +126,6 @@ public class TileView extends View {
   protected Coordinate getTileCoordForPos(int xloc, int yloc) {
     float resX= (float)(xloc - mXOffset) / mTileSizeX;
     float resY = (float)(yloc - mYOffset) / mTileSizeY;
-    Log.i("kc", String.format("xloc = %s, mXOffset = %s, xloc-xoffset=%s, res=%f", xloc, mXOffset, xloc-mXOffset, resX));
-    Log.i("kc", String.format("yloc = %s, mYOffset = %s, yloc-yoffset=%s, res=%f", yloc, mYOffset, yloc-mYOffset, resY));
     if (resX < 0 || resY < 0) {
       return null;
     } else
@@ -142,7 +142,6 @@ public class TileView extends View {
         setTile(0, x, y);
       }
     }
-    Log.i("KC", "Tiles clean");
   }
 
   public void setTile(int tileindex, int x, int y) {
@@ -152,16 +151,39 @@ public class TileView extends View {
   @Override
   public void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    for (int x = 0; x < mXTilesCount; x += 1) {
-      for (int y = 0; y < mYTilesCount; y += 1) {
+    for (int x = 0; x < mXTilesCount; x++) {
+      for (int y = 0; y < mYTilesCount; y++) {
         if (mTileGrid[x][y] > 0) {
           int px = mXOffset + x * mTileSizeX;
           int py = mYOffset + y * mTileSizeY;
-          canvas.drawBitmap(mTileArray[mTileGrid[x][y] - 1], px, py, mPaint);
+          int bitmapIndex = mTileGrid[x][y] - 1;
+          canvas.drawBitmap(mTileArray[bitmapIndex], px, py, mPaint);
         }
       }
     }
 
+  }
+  protected int getTile(int x, int y) {
+    return mTileGrid[x][y];
+  }
+  protected boolean isGrowingIndexValue() {
+    boolean isGrowing = true;
+    int x = 0, y = 0;
+    int prev = mTileGrid[0][0];
+    while (isGrowing) {
+      y++;
+      if (y == mYTilesCount - 1) {
+        y = 0; x++;
+        if (x == mXTilesCount) {
+          break;
+        }
+      }
+      int next = mTileGrid[x][y];
+      isGrowing = (next == prev + 1);
+      prev = next;
+    }
+    return isGrowing;
+    
   }
   /**
    * Simple class containing two integer values and a comparison function.

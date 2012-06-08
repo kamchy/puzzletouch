@@ -45,32 +45,6 @@ public class Puzzle extends Activity {
         mPuzzleView = (PuzzleView) findViewById(R.id.puzzle);
         mPuzzleView.setTextView((TextView) findViewById(R.id.text));
 
-
-        if (savedInstanceState == null) {
-            mPuzzleView.setMode(PuzzleView.STATE_RUNNING);
-        } else {
-            // We are being restored
-            Bundle map = savedInstanceState.getBundle(PUZZLE_KEY);
-            if (map != null) {
-                mPuzzleView.restoreState(map);
-            } else {
-                mPuzzleView.setMode(PuzzleView.STATE_PAUSE);
-            }
-        }
+        mPuzzleView.setMode(PuzzleView.STATE_RUNNING);
     }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Pause the game along with the activity
-        mPuzzleView.setMode(PuzzleView.STATE_PAUSE);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        //Store the game state
-        outState.putBundle(PUZZLE_KEY, mPuzzleView.saveState());
-    }
-
 }

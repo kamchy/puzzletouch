@@ -24,6 +24,7 @@ import android.graphics.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 
 /**
@@ -54,7 +55,7 @@ public class PuzzleView extends TileView {
 
   private static int mImageCount;
 
-  private static int mTilesCount;
+  private static int mTilesInImageCount;
 
   /**
    * Constructs a PuzzleView based on inflation from XML
@@ -84,13 +85,13 @@ public class PuzzleView extends TileView {
         (R.drawable.piesek), };
 
     mImageCount = drawableIds.length;
-    mTilesCount = mXTilesCount * mYTilesCount;
+    mTilesInImageCount = mXTilesCount * mYTilesCount;
+    mAllTilesCount = mTilesInImageCount * mImageCount;
 
     resetTiles(mXTilesCount, mYTilesCount, mImageCount);
 
     for (int i = 0; i < mImageCount; i++) {
-
-      loadTiles(i * mTilesCount, drawableIds[i]);
+      loadTiles(i * mTilesInImageCount, drawableIds[i]);
     }
 
     shuffleTiles();
@@ -107,11 +108,21 @@ public class PuzzleView extends TileView {
     case MotionEvent.ACTION_UP:
       Coordinate coord = getCoordForTouchpoint(x, y);
       if (coord != null) {
-        int currentTile = mTileGrid[coord.x][coord.y];
-        mTileGrid[coord.x][coord.y] =   (currentTile + mTilesCount) % (mTilesCount * mImageCount);
+        int currentTile = getTile(coord.x, coord.y);
+        int nextTileIndex = getNextTileIndex(currentTile);
+        setTile(nextTileIndex, coord.x, coord.y);
+        
       }
     }
     return false;
+  }
+
+  private int getNextTileIndex(int currentTile) {
+    int nextIdx = (currentTile + mTilesInImageCount) % mAllTilesCount;
+    if (nextIdx == 0) {
+      nextIdx = mAllTilesCount;
+    }
+    return nextIdx;
   }
 
   private Coordinate getCoordForTouchpoint(int x, int y) {
@@ -138,8 +149,6 @@ public class PuzzleView extends TileView {
     for (int x = 0; x < mXTilesCount; x++) {
       for (int y = 0; y < mYTilesCount; y++) {
         int tileIndex = getRandomIndexFor(x, y);
-        Log.i("KC",
-            String.format("Shuffling: %s %s - tile nr %s", x, y, tileIndex));
         setTile(tileIndex, x, y);
       }
     }
@@ -149,6 +158,8 @@ public class PuzzleView extends TileView {
 
   private long mMoveDelay = 10;
   private long mLastMove = 0;
+
+  private int mAllTilesCount;
 
   class RefreshHandler extends Handler {
 
@@ -175,10 +186,9 @@ public class PuzzleView extends TileView {
    *         location x, y
    */
   private int getRandomIndexFor(int x, int y) {
-    int result = 0;
-    result = y * mXTilesCount + x + 1; // 1-based, 0 means no tile
-    result += RND.nextInt(mImageCount) * mTilesCount;
-    return result;
+    int firstImageIndex = y * mXTilesCount + x + 1; // 1-based, 0 means no tile
+    int delta = RND.nextInt(mImageCount) * mTilesInImageCount;
+    return firstImageIndex + delta;
   }
 
 
@@ -210,6 +220,8 @@ public class PuzzleView extends TileView {
 
     mStatusText.setText(str);
     mStatusText.setVisibility(View.VISIBLE);
+    mStatusText.setAnimation(AnimationUtils.makeOutAnimation(this.getContext(), true));
+    mStatusText.getAnimation().start();
   }
 
   private void update() {
@@ -227,67 +239,10 @@ public class PuzzleView extends TileView {
   }
 
   private void updateScore() {
+    //if (isGrowingIndexValue()) {
+      //setMode(STATE_FINISHED);
+    //}
   }
-
-  /**
-   * Given a flattened array of ordinate pairs, we reconstitute them into a
-   * ArrayList of Coordinate objects
-   *
-   * @param rawArray
-   *          : [x1,y1,x2,y2,...]
-   * @return a ArrayList of Coordinates
-   */
-  private ArrayList<Coordinate> coordArrayToArrayList(int[] rawArray) {
-    ArrayList<Coordinate> coordArrayList = new ArrayList<Coordinate>();
-
-    int coordCount = rawArray.length;
-    for (int index = 0; index < coordCount; index += 2) {
-      Coordinate c = new Coordinate(rawArray[index], rawArray[index + 1]);
-      coordArrayList.add(c);
-    }
-    return coordArrayList;
-  }
-
-
-  /**
-   * Saves state
-   *
-   * @return a Bundle with this view's state
-   */
-  public Bundle saveState() {
-    Bundle map = new Bundle();
-    map.putBoolean("mScore", Boolean.valueOf(mScore));
-    map.putIntArray("mPuzzleCoordsl", coordArrayListToArray(mPuzzleCoords1));
-    return map;
-  }
-
-  /**
-   * Given a ArrayList of coordinates, we need to flatten them into an array of
-   * ints before we can stuff them into a map for flattening and storage.
-   *
-   * @param cvec
-   *          : a ArrayList of Coordinate objects
-   * @return : a simple array containing the x/y values of the coordinates as
-   *         [x1,y1,x2,y2,x3,y3...]
-   */
-  private int[] coordArrayListToArray(ArrayList<Coordinate> cvec) {
-    int count = cvec.size();
-    int[] rawArray = new int[count * 2];
-    for (int index = 0; index < count; index++) {
-      Coordinate c = cvec.get(index);
-      rawArray[2 * index] = c.x;
-      rawArray[2 * index + 1] = c.y;
-    }
-    return rawArray;
-  }
-
-
-  public void restoreState(Bundle map) {
-    mScore = map.getBoolean("mScore");
-    mPuzzleCoords1 = coordArrayToArrayList(map.getIntArray("mPuzzleCoords1"));
-  }
-
-
 
 
   public void setTextView(TextView findViewById) {
