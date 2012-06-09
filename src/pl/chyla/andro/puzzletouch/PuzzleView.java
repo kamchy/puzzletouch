@@ -145,7 +145,7 @@ public class PuzzleView extends TileView {
     mScore = false;
   }
 
-  private void shuffleTiles() {
+  void shuffleTiles() {
     for (int x = 0; x < mXTilesCount; x++) {
       for (int y = 0; y < mYTilesCount; y++) {
         int tileIndex = getRandomIndexFor(x, y);
