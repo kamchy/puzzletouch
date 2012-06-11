@@ -9,88 +9,26 @@ package pl.chyla.andro.puzzletouch;
 
 public final class R {
     public static final class attr {
-        /** <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int tilesX=0x7f010000;
-        /** <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int tilesY=0x7f010001;
     }
     public static final class drawable {
-        public static final int konik=0x7f020000;
-        public static final int kot=0x7f020001;
-        public static final int piesek=0x7f020002;
-        public static final int tlo=0x7f020003;
+        public static final int icon=0x7f020000;
+        public static final int konik=0x7f020001;
+        public static final int kot=0x7f020002;
+        public static final int piesek=0x7f020003;
+        public static final int tlo=0x7f020004;
     }
     public static final class id {
         public static final int puzzle=0x7f060000;
         public static final int text=0x7f060001;
     }
     public static final class layout {
-        public static final int snake_layout=0x7f030000;
+        public static final int puzzle_layout=0x7f030000;
     }
     public static final class string {
-        public static final int mode_finished=0x7f040001;
-        public static final int mode_paused=0x7f040002;
-        public static final int mode_ready=0x7f040000;
-        public static final int puzzle_layout_text_text=0x7f040003;
+        public static final int mode_finished=0x7f040000;
+        public static final int puzzle_layout_text_text=0x7f040001;
     }
     public static final class style {
         public static final int Theme_NoBackground=0x7f050000;
     }
-    public static final class styleable {
-        /** Attributes that can be used with a TileView.
-           <p>Includes the following attributes:</p>
-           <table>
-           <colgroup align="left" />
-           <colgroup align="left" />
-           <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #TileView_tilesX pl.chyla.andro.puzzletouch:tilesX}</code></td><td></td></tr>
-           <tr><td><code>{@link #TileView_tilesY pl.chyla.andro.puzzletouch:tilesY}</code></td><td></td></tr>
-           </table>
-           @see #TileView_tilesX
-           @see #TileView_tilesY
-         */
-        public static final int[] TileView = {
-            0x7f010000, 0x7f010001
-        };
-        /**
-          <p>This symbol is the offset where the {@link pl.chyla.andro.puzzletouch.R.attr#tilesX}
-          attribute's value can be found in the {@link #TileView} array.
-
-
-          <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:tilesX
-        */
-        public static final int TileView_tilesX = 0;
-        /**
-          <p>This symbol is the offset where the {@link pl.chyla.andro.puzzletouch.R.attr#tilesY}
-          attribute's value can be found in the {@link #TileView} array.
-
-
-          <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:tilesY
-        */
-        public static final int TileView_tilesY = 1;
-    };
 }

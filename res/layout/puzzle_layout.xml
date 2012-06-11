@@ -10,7 +10,6 @@
 	 android:id="@+id/puzzle"
 		android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tileSize="160"
                 />
 	
 	<RelativeLayout
@@ -21,11 +20,12 @@
 		 android:id="@+id/text"
 			android:text="@string/puzzle_layout_text_text"
 			android:visibility="visible"
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
-			android:gravity="center_horizontal"
-			android:textColor="#ff8888ff"
+			android:gravity="center_vertical|center_horizontal"
+			android:textColor="#032323"
+			android:background="#fefefe66"
 			android:textSize="24sp"/>
 	</RelativeLayout>
 </FrameLayout>

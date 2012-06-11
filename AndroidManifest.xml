@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pl.chyla.andro.puzzletouch"><application android:label="PuzzleTouch" android:icon="@drawable/icon">
-      <activity android:name="pl.chyla.andro.puzzletouch.Puzzle" 
+    package="pl.chyla.andro.puzzletouch">
+    <uses-sdk android:minSdkVersion="10" />
+    <application android:label="PuzzleTouch" android:icon="@drawable/icon">
+      <activity android:name=".Puzzle" 
           android:theme="@style/Theme.NoBackground" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
     </application>
 </manifest> 

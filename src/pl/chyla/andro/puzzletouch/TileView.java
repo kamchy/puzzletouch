@@ -1,11 +1,13 @@
 package pl.chyla.andro.puzzletouch;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -45,25 +47,31 @@ public class TileView extends View {
   private final Paint mPaint = new Paint();
   private int mImageWidth;
   private int mImageHeight;
+  private Paint mFramePaint = createFramePaint(0x88ccaa, 2);
 
   public TileView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     setTilesCount(context, attrs);
   }
 
-  private void setTilesCount(Context context, AttributeSet attrs) {
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TileView);
+  private Paint createFramePaint(int color, int radius) {
+    Paint mDrawPaint = new Paint(Paint.DITHER_FLAG);
+    mDrawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC)) ;
+    mDrawPaint.setColor(color);
+    mDrawPaint.setStyle(Style.STROKE);
+    mDrawPaint.setStrokeWidth(radius);
+    return mDrawPaint;
+  }
 
-    mXTilesCount = a.getInt(R.styleable.TileView_tilesX, 3);
-    mYTilesCount = a.getInt(R.styleable.TileView_tilesY, 3);
-    mImageWidth = a.getInt(R.styleable.TileView_imageWidth, 480);
-    mImageHeight = a.getInt(R.styleable.TileView_imageHeight, 480);
+  private void setTilesCount(Context context, AttributeSet attrs) {
+    mXTilesCount = 3;
+    mYTilesCount = 3;
+    mImageWidth = 480;
+    mImageHeight = 480;
     mTileSizeX = mImageWidth / mXTilesCount;
     mTileSizeY = mImageHeight / mYTilesCount;
     mTileGrid = new int[mXTilesCount][mYTilesCount];
-
-    a.recycle();
-    requestLayout();
+    //requestLayout();
   }
 
   public TileView(Context context, AttributeSet attrs) {
@@ -85,8 +93,6 @@ public class TileView extends View {
 
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    Log.i("KC", String.format("* -> Size changed from (%s, %s) to (%s, %s",
-        oldw, oldh, w, h));
     int size = Math.min(w, h);
     
     mImageWidth = size; mImageHeight = size;
@@ -116,7 +122,6 @@ public class TileView extends View {
     }
   }
 
-  //todo implement|J
   /**
    *
    * @param xloc
@@ -151,17 +156,34 @@ public class TileView extends View {
   @Override
   public void onDraw(Canvas canvas) {
     super.onDraw(canvas);
+    drawTiles(canvas);
+    drawFrames(canvas);
+
+  }
+
+  private void drawFrames(Canvas canvas) {
+    for (int x = 0; x < mXTilesCount; x++) {
+      for (int y = 0; y < mYTilesCount; y++) {
+        int px = mXOffset + x * mTileSizeX;
+        int py = mYOffset + y * mTileSizeY;
+        canvas.drawRect(px, py, px + mTileSizeX, py + mTileSizeY, mFramePaint);
+      }
+    }
+  }
+
+  private void drawTiles(Canvas canvas) {
     for (int x = 0; x < mXTilesCount; x++) {
       for (int y = 0; y < mYTilesCount; y++) {
         if (mTileGrid[x][y] > 0) {
           int px = mXOffset + x * mTileSizeX;
           int py = mYOffset + y * mTileSizeY;
           int bitmapIndex = mTileGrid[x][y] - 1;
-          canvas.drawBitmap(mTileArray[bitmapIndex], px, py, mPaint);
+          Bitmap bitmap = mTileArray[bitmapIndex];
+          canvas.drawBitmap(bitmap, px, py, mPaint);
+          
         }
       }
     }
-
   }
   protected int getTile(int x, int y) {
     return mTileGrid[x][y];
@@ -171,10 +193,10 @@ public class TileView extends View {
     int x = 0, y = 0;
     int prev = mTileGrid[0][0];
     while (isGrowing) {
-      y++;
-      if (y == mYTilesCount - 1) {
-        y = 0; x++;
-        if (x == mXTilesCount) {
+      x++;
+      if (x == mXTilesCount) {
+        x = 0; y++;
+        if (y == mYTilesCount) {
           break;
         }
       }

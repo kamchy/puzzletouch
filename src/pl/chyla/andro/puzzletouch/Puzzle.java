@@ -18,34 +18,23 @@ package pl.chyla.andro.puzzletouch;
 
 
 
+import pl.chyla.andro.activity.ShakeActivity;
+import pl.chyla.andro.puzzletouch.R;
+import pl.chyla.andro.puzzletouch.R.id;
+import pl.chyla.andro.puzzletouch.R.layout;
 import android.app.Activity;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Puzzle: a simple game
  */
-public class Puzzle extends Activity implements SensorEventListener {
+public class Puzzle extends ShakeActivity {
 
-    private static final float SHAKE_THRESHOLD = 800;
-
-    private PuzzleView mPuzzleView;
-
-    private SensorManager sensorMgr;
-
-    private long lastUpdate;
-
-    private float last_x;
-
-    private float last_y;
-
-    private float last_z;
+    public PuzzleView mPuzzleView;
 
     private static String PUZZLE_KEY = "puzzle-view";
 
@@ -58,51 +47,19 @@ public class Puzzle extends Activity implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.snake_layout);
+        setContentView(R.layout.puzzle_layout);
 
         mPuzzleView = (PuzzleView) findViewById(R.id.puzzle);
         mPuzzleView.setTextView((TextView) findViewById(R.id.text));
 
         mPuzzleView.setMode(PuzzleView.STATE_RUNNING);
-        initSensors();
+        
     }
 
-    private void initSensors() {
-      sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-      sensorMgr.registerListener((SensorEventListener)this,
-      sensorMgr.getDefaultSensor(SensorManager.SENSOR_ACCELEROMETER),
-      SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    public void onAccuracyChanged(Sensor arg0, int arg1) {
-      // TODO Auto-generated method stub
+    @Override
+    protected void executeShakeAction() {
+      mPuzzleView.startNewGame();
       
     }
-
-    public void onSensorChanged(SensorEvent evt) {
-      if (evt.sensor.getType() == SensorManager.SENSOR_ACCELEROMETER) {
-        long curTime = System.currentTimeMillis();
-        if ((curTime - lastUpdate) > 100) {
-          long diffTime = (curTime - lastUpdate);
-          lastUpdate = curTime;
-
-          float x = evt.values[SensorManager.DATA_X];
-          float y = evt.values[SensorManager.DATA_Y];
-          float z = evt.values[SensorManager.DATA_Z];
-
-          float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-
-          if (speed > SHAKE_THRESHOLD) {
-            Log.d("sensor", "shake detected w/ speed: " + speed);
-            Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
-            mPuzzleView.shuffleTiles();
-          }
-          last_x = x;
-          last_y = y;
-          last_z = z;
-        }
-      }
-
-      
-    }
+    
 }

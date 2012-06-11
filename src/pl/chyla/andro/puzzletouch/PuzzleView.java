@@ -16,16 +16,17 @@
 
 package pl.chyla.andro.puzzletouch;
 
-import java.util.*;
+import java.util.Random;
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
-import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Message;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * PuzzleView: implementation of a simple game of Puzzle
@@ -40,16 +41,13 @@ public class PuzzleView extends TileView {
   static final int STATE_FINISHED = 3;
   static final int STATE_PAUSE = 4;
 
-  private boolean mScore = false;
+  
   private int mMode = 0;
 
   /**
    * mStatusText: text shows to the user in some run states
    */
   private TextView mStatusText;
-
-  private ArrayList<Coordinate> mPuzzleCoords1;
-  private Map<Coordinate, Rect> mCoordsToRect;
 
   private static final Random RND = new Random();
 
@@ -96,6 +94,12 @@ public class PuzzleView extends TileView {
 
     shuffleTiles();
   }
+  
+  public void startNewGame() {
+    setMode(STATE_PAUSE);
+    setMode(STATE_RUNNING);
+    shuffleTiles();
+  }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
@@ -111,7 +115,9 @@ public class PuzzleView extends TileView {
         int currentTile = getTile(coord.x, coord.y);
         int nextTileIndex = getNextTileIndex(currentTile);
         setTile(nextTileIndex, coord.x, coord.y);
-        
+        updateScore();
+      } else {
+        startNewGame();
       }
     }
     return false;
@@ -138,11 +144,6 @@ public class PuzzleView extends TileView {
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
     initTiles();
-  }
-
-  private void initNewGame() {
-    shuffleTiles();
-    mScore = false;
   }
 
   void shuffleTiles() {
@@ -208,29 +209,21 @@ public class PuzzleView extends TileView {
       return;
     }
 
-    Resources res = getContext().getResources();
-    CharSequence str = "";
-    if (newMode == STATE_PAUSE) {
-      str = res.getText(R.string.mode_paused);
-    }
-
     if (newMode == STATE_FINISHED) {
+      Resources res = getContext().getResources();
+      CharSequence str = "";
+
       str = res.getString(R.string.mode_finished);
+      mStatusText.setText(str);
+      mStatusText.setVisibility(View.VISIBLE);
     }
 
-    mStatusText.setText(str);
-    mStatusText.setVisibility(View.VISIBLE);
-    mStatusText.setAnimation(AnimationUtils.makeOutAnimation(this.getContext(), true));
-    mStatusText.getAnimation().start();
   }
 
   private void update() {
-
     if (mMode == STATE_RUNNING) {
       long now = System.currentTimeMillis();
-
       if (now - mLastMove > mMoveDelay) {
-        updateScore();
         mLastMove = now;
       }
       mRedrawHandler.sleep(mMoveDelay);
@@ -239,9 +232,9 @@ public class PuzzleView extends TileView {
   }
 
   private void updateScore() {
-    //if (isGrowingIndexValue()) {
-      //setMode(STATE_FINISHED);
-    //}
+    if (isGrowingIndexValue()) {
+      setMode(STATE_FINISHED);
+    }
   }
 
 

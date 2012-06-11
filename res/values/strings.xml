@@ -15,8 +15,6 @@
 -->
 
 <resources>
-  <string name="mode_ready">Snake\nStart touching</string>
-  <string name="mode_finished">\nTouch backgdound to start again</string>
-  <string name="mode_paused">\nPaused</string>
+  <string name="mode_finished">\nPotrząśnij lub dotknij tła</string>
   <string name="puzzle_layout_text_text"></string>
 </resources>
