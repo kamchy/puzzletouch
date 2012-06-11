@@ -1,5 +1,5 @@
 *.class
 *.swp
-bin/*
-gen/*
+bin/**
+gen/**
 

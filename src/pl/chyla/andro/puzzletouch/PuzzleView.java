@@ -33,7 +33,6 @@ import android.widget.TextView;
  */
 public class PuzzleView extends TileView {
 
-  private static final String TAG = "PuzzleView";
 
   // game states
   static final int STATE_RUNNING = 1;
@@ -76,8 +75,6 @@ public class PuzzleView extends TileView {
   void initTiles() {
     Log.i("KC", "--init tiles--");
     setFocusable(true);
-
-    Resources r = this.getContext().getResources();
 
     int[] drawableIds = new int[] { (R.drawable.konik), (R.drawable.kot),
         (R.drawable.piesek), };

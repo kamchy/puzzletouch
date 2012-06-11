@@ -19,14 +19,7 @@ package pl.chyla.andro.puzzletouch;
 
 
 import pl.chyla.andro.activity.ShakeActivity;
-import pl.chyla.andro.puzzletouch.R;
-import pl.chyla.andro.puzzletouch.R.id;
-import pl.chyla.andro.puzzletouch.R.layout;
-import android.app.Activity;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -35,8 +28,6 @@ import android.widget.TextView;
 public class Puzzle extends ShakeActivity {
 
     public PuzzleView mPuzzleView;
-
-    private static String PUZZLE_KEY = "puzzle-view";
 
     /**
      * Called when Activity is first created. Turns off the title bar, sets up
