@@ -48,13 +48,24 @@ public class PuzzleView extends TileView {
    * mStatusText: text shows to the user in some run states
    */
   private TextView mStatusText;
+  private static int[] animals = new int[] { (R.drawable.konik), (R.drawable.kot),
+      (R.drawable.piesek), };
+  
+  private static int[] toys = new int[] { (R.drawable.lyzeczka), (R.drawable.pileczka),
+      (R.drawable.autko), };
 
+  private static int[] nobo = new int[] { (R.drawable.laka), (R.drawable.noboibrat),
+    (R.drawable.nobokonik), };
+
+  private static int[][] puzzles = new int[][]{
+    toys, animals, nobo };
+  
+  private int currentId = 0;
+  
   private static final Random RND = new Random();
   private static final long mMoveDelay = 10;
 
   private static int mImageCount;
-
-  private static int mTilesInImageCount;
 
   /**
    * Constructs a PuzzleView based on inflation from XML
@@ -70,25 +81,27 @@ public class PuzzleView extends TileView {
   void initTiles() {
     setFocusable(true);
 
-    int[] drawableIds = new int[] { (R.drawable.konik), (R.drawable.kot),
-        (R.drawable.piesek), };
-
-    mImageCount = drawableIds.length;
-    mTilesInImageCount = mXTilesCount * mYTilesCount;
-    mAllTilesCount = mTilesInImageCount * mImageCount;
-
-    resetTiles(mXTilesCount, mYTilesCount, mImageCount);
-
-    for (int i = 0; i < mImageCount; i++) {
-      loadTiles(i * mTilesInImageCount, drawableIds[i]);
-    }
+    initTilesFromResources(getRandomPuzzleArray());
 
     shuffleTiles();
+  }
+
+  private int[] getRandomPuzzleArray() {
+    currentId = (currentId  + 1) % puzzles.length;
+    return puzzles[currentId];
+  }
+
+  private void initTilesFromResources(int[] drawableIds) {
+    mImageCount = drawableIds.length;
+    mAllTilesCount = mTilesInImageCount * mImageCount;
+    resetTiles(mXTilesCount, mYTilesCount, mImageCount);
+    loadTiles(drawableIds);
   }
   
   public void startNewGame() {
     setMode(STATE_PAUSE);
     setMode(STATE_RUNNING);
+    initTilesFromResources(getRandomPuzzleArray());
     shuffleTiles();
   }
 
@@ -101,7 +114,7 @@ public class PuzzleView extends TileView {
     case MotionEvent.ACTION_MOVE:
     case MotionEvent.ACTION_UP:
       Coordinate coord = getCoordForTouchpoint(x, y);
-      if (coord != null) {
+      if ((coord != null) && (mMode == STATE_RUNNING)) {
         int currentTile = getTile(coord.x, coord.y);
         int nextTileIndex = getNextTileIndex(currentTile);
         setTile(nextTileIndex, coord.x, coord.y);
@@ -109,9 +122,10 @@ public class PuzzleView extends TileView {
       } else {
         startNewGame();
       }
-      update();
-    default: ;
+      
+     default: ;
     }
+    update();
     return false;
   }
 
@@ -213,9 +227,9 @@ public class PuzzleView extends TileView {
   }
 
   private void update() {
-    if (mMode == STATE_RUNNING) {
+    //if (mMode == STATE_RUNNING) {
       mRedrawHandler.sleep(mMoveDelay);
-    }
+    //}
   }
 
   private void updateScore() {

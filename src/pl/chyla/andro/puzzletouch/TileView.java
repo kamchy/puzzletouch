@@ -32,6 +32,7 @@ public class TileView extends View {
 
   private static int mTileSizeX;
   private static int mTileSizeY;
+  protected static int mTilesInImageCount;
 
   /**
    * A hash that maps integer handles specified by the subclasser to the
@@ -72,6 +73,7 @@ public class TileView extends View {
     mTileSizeX = mImageWidth / mXTilesCount;
     mTileSizeY = mImageHeight / mYTilesCount;
     mTileGrid = new int[mXTilesCount][mYTilesCount];
+    mTilesInImageCount = mXTilesCount * mYTilesCount;
     //requestLayout();
   }
 
@@ -108,10 +110,17 @@ public class TileView extends View {
   }
 
 
-  protected void loadTiles(int startIndex, int drawableId) {
+  protected void loadTiles(int[] drawableIds) {
+    for (int i = 0; i < drawableIds.length; i++) {
+      int startIndex = i * mTilesInImageCount; 
+      int drawableId = drawableIds[i];
+      fillTilesArrayStartingFrom(startIndex, drawableId);
+    }
+  }
+
+  private void fillTilesArrayStartingFrom(int startIndex, int drawableId) {
     Bitmap bMap = BitmapFactory.decodeResource(getResources(), drawableId);
     Bitmap bMapScaled = Bitmap.createScaledBitmap(bMap, mImageWidth, mImageHeight, true);
-
     for (int x = 0; x < mXTilesCount; x++) {
       for (int y = 0; y < mYTilesCount; y++) {
         int xPos = x * mTileSizeX;
@@ -121,6 +130,8 @@ public class TileView extends View {
         mTileArray[idx] = bitmap;
       }
     }
+
+    
   }
 
   /**

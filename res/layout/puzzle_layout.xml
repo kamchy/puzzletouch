@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@drawable/tlo"
-	>
-	
-	<pl.chyla.andro.puzzletouch.PuzzleView
-	 android:id="@+id/puzzle"
-		android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-	
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" >
-		
-		<TextView
-		 android:id="@+id/text"
-			android:text="@string/puzzle_layout_text_text"
-			android:visibility="visible"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:gravity="center_vertical|center_horizontal"
-			android:textColor="#032323"
-			android:background="#fefefe66"
-			android:textSize="24sp"/>
-	</RelativeLayout>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <pl.chyla.andro.puzzletouch.PuzzleView
+        android:id="@+id/puzzle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/tlo" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="#02020244"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/puzzle_layout_text_text"
+            android:textColor="#032323"
+            android:textSize="24sp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
 </FrameLayout>
