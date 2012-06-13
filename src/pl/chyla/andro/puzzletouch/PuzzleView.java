@@ -23,7 +23,6 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -42,6 +41,8 @@ public class PuzzleView extends TileView {
 
   
   private int mMode = 0;
+  
+  private int mAllTilesCount;
 
   /**
    * mStatusText: text shows to the user in some run states
@@ -49,6 +50,7 @@ public class PuzzleView extends TileView {
   private TextView mStatusText;
 
   private static final Random RND = new Random();
+  private static final long mMoveDelay = 10;
 
   private static int mImageCount;
 
@@ -62,18 +64,10 @@ public class PuzzleView extends TileView {
    */
   public PuzzleView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    Log.i("KC", "PuzzleView constr 1");
-    initTiles();
-  }
-
-  public PuzzleView(Context context, AttributeSet attrs, int defStyle) {
-    super(context, attrs, defStyle);
-    Log.i("KC", "PuzzleView constr 2");
     initTiles();
   }
 
   void initTiles() {
-    Log.i("KC", "--init tiles--");
     setFocusable(true);
 
     int[] drawableIds = new int[] { (R.drawable.konik), (R.drawable.kot),
@@ -104,7 +98,6 @@ public class PuzzleView extends TileView {
     int y = (int) event.getY();
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN:
-
     case MotionEvent.ACTION_MOVE:
     case MotionEvent.ACTION_UP:
       Coordinate coord = getCoordForTouchpoint(x, y);
@@ -116,6 +109,8 @@ public class PuzzleView extends TileView {
       } else {
         startNewGame();
       }
+      update();
+    default: ;
     }
     return false;
   }
@@ -154,16 +149,12 @@ public class PuzzleView extends TileView {
 
   private RefreshHandler mRedrawHandler = new RefreshHandler();
 
-  private long mMoveDelay = 10;
-  private long mLastMove = 0;
-
-  private int mAllTilesCount;
+  
 
   class RefreshHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-      PuzzleView.this.update();
       PuzzleView.this.invalidate();
     }
 
@@ -207,25 +198,24 @@ public class PuzzleView extends TileView {
     }
 
     if (newMode == STATE_FINISHED) {
-      Resources res = getContext().getResources();
-      CharSequence str = "";
-
-      str = res.getString(R.string.mode_finished);
-      mStatusText.setText(str);
-      mStatusText.setVisibility(View.VISIBLE);
+      showFinishMessage();
     }
 
   }
 
+  private void showFinishMessage() {
+    Resources res = getContext().getResources();
+    CharSequence str = "";
+
+    str = res.getString(R.string.mode_finished);
+    mStatusText.setText(str);
+    mStatusText.setVisibility(View.VISIBLE);
+  }
+
   private void update() {
     if (mMode == STATE_RUNNING) {
-      long now = System.currentTimeMillis();
-      if (now - mLastMove > mMoveDelay) {
-        mLastMove = now;
-      }
       mRedrawHandler.sleep(mMoveDelay);
     }
-
   }
 
   private void updateScore() {

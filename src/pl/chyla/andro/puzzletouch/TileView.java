@@ -14,6 +14,8 @@ import android.view.View;
 /**
  * TileView: a View-variant designed for handling arrays of "icons" or other
  * drawables.
+ * 
+ * Stolen from snake example.
  *
  */
 public class TileView extends View {
@@ -207,9 +209,7 @@ public class TileView extends View {
     
   }
   /**
-   * Simple class containing two integer values and a comparison function.
-   * There's probably something I should use instead, but this was quick and
-   * easy to build.
+   * Stolen from snake example:
    *
    */
   protected  class Coordinate {

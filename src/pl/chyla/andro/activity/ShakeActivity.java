@@ -29,10 +29,8 @@ public abstract class ShakeActivity extends Activity implements SensorEventListe
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    // TODO Auto-generated method stub
     super.onCreate(savedInstanceState);
     sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-    initSensors();
 
   }
 
